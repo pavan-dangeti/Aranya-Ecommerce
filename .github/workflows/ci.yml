@@ -17,7 +17,7 @@ jobs:
     name: Lint, typecheck, knip, format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -46,7 +46,7 @@ jobs:
     env:
       TEST_DATABASE_URL: postgresql://aranya:aranya@localhost:5432/aranya_test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -58,7 +58,7 @@ jobs:
     name: Build and bundle budget
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -90,7 +90,7 @@ jobs:
     env:
       E2E_DATABASE_URL: postgresql://aranya:aranya@localhost:5432/aranya_e2e
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
