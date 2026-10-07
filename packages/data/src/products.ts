@@ -1,0 +1,781 @@
+import type { Product } from '@aranya/shared'
+
+export const products: Product[] = [
+  {
+    id: 'arn-001',
+    name: 'Ashwagandha Root Capsules',
+    slug: 'ashwagandha-root-capsules',
+    category: 'herbal-supplements',
+    shortDescription:
+      'Slow-dried Ashwagandha root from Rajasthan, milled and encapsulated without fillers.',
+    description:
+      'Our Ashwagandha is grown on rain-fed farms in the arid belts of Rajasthan, where the root develops its characteristic depth over a full growing season. Roots are harvested at maturity, shade-dried, and stone-milled in small batches. Each capsule contains only powdered root — no extracts, flow agents, or fillers. Traditionally used in Ayurveda as a rasayana, ashwagandha has been part of evening routines for centuries.',
+    price: 899,
+    compareAtPrice: 1099,
+    rating: 4.8,
+    reviewCount: 214,
+    ingredients: [
+      { name: 'Organic Ashwagandha root powder', note: 'Withania somnifera' },
+      { name: 'Plant cellulose capsule shell', note: 'vegan' },
+    ],
+    benefits: [
+      'Traditionally used in Ayurveda as a rejuvenative (rasayana) herb',
+      'A grounding addition to evening wind-down rituals',
+      'Single-ingredient purity — nothing else inside',
+    ],
+    usage:
+      'Two capsules with warm water or milk, about an hour before bed. Consistency over 6–8 weeks is how Ayurveda traditionally approaches rasayana herbs.',
+    origin: 'Sirohi district, Rajasthan',
+    stock: 42,
+    tags: ['adaptogen', 'root', 'evening ritual', 'calm', 'sleep'],
+    featured: true,
+    visual: {
+      form: 'flask',
+      glass: '#5c4327',
+      liquid: '#7a5b34',
+      label: '#f4efe3',
+      accent: '#c29a64',
+    },
+  },
+  {
+    id: 'arn-002',
+    name: 'Turmeric Complex',
+    slug: 'turmeric-complex',
+    category: 'herbal-supplements',
+    shortDescription:
+      'Lakadong turmeric paired with black pepper, the way traditional kitchens have always combined them.',
+    description:
+      'Grown in the Lakadong belt of Meghalaya, this turmeric is prized for its naturally deep colour. We pair it with a whisper of Maricha (black pepper), following the pairing tradition of Indian kitchens, alongside dried ginger from Kerala. Sun-cured, stone-milled, and pressed into tablets with nothing binding them but the herbs themselves.',
+    price: 749,
+    compareAtPrice: 899,
+    rating: 4.7,
+    reviewCount: 186,
+    ingredients: [
+      { name: 'Lakadong turmeric rhizome', note: 'Curcuma longa' },
+      { name: 'Black pepper fruit', note: 'Piper nigrum' },
+      { name: 'Dried ginger rhizome', note: 'Zingiber officinale' },
+    ],
+    benefits: [
+      'Turmeric has been a staple of traditional Indian wellness for generations',
+      'Classic kitchen-style pairing of turmeric with black pepper',
+      'Whole-herb tablets rather than isolated extracts',
+    ],
+    usage:
+      'One tablet twice daily after meals, or dissolved into warm milk as golden milk. A pinch of ghee is the traditional carrier.',
+    origin: 'Lakadong, Meghalaya',
+    stock: 58,
+    tags: ['turmeric', 'haldi', 'golden milk', 'daily ritual', 'spice'],
+    featured: true,
+    visual: {
+      form: 'flask',
+      glass: '#8a5a1e',
+      liquid: '#c98a2d',
+      label: '#faf7f0',
+      accent: '#a85a38',
+    },
+  },
+  {
+    id: 'arn-003',
+    name: 'Tulsi Elixir',
+    slug: 'tulsi-elixir',
+    category: 'herbal-drinks',
+    shortDescription:
+      'A concentrated three-variety Tulsi infusion to take by the drop, hot or cold.',
+    description:
+      'Three varieties of holy basil — Rama, Krishna, and Vana — are hand-harvested before flowering, when their aromatic oils are at their fullest. A slow cold-percolation draws out the character of each leaf without heat. The result is a deep green elixir that carries the clove-sweet signature of Krishna tulsi and the calm lemon note of Vana. Take it by the drop into tea, water, or straight under the tongue.',
+    price: 499,
+    rating: 4.9,
+    reviewCount: 328,
+    ingredients: [
+      { name: 'Rama tulsi leaf', note: 'Ocimum sanctum' },
+      { name: 'Krishna tulsi leaf', note: 'Ocimum tenuiflorum' },
+      { name: 'Vana tulsi leaf', note: 'Ocimum gratissimum' },
+      { name: 'Vegetable glycerine & spring water', note: 'alcohol-free base' },
+    ],
+    benefits: [
+      'Tulsi is traditionally sipped daily in Indian households as a calming herbal infusion',
+      'Three-variety blend for layered aromatic complexity',
+      'Alcohol-free, glycerine-based extraction',
+    ],
+    usage:
+      'One dropperful (about 20 drops) into warm water, tea, or sparkling water. Up to three times daily. Also lovely over ice with lime.',
+    origin: 'Plains of eastern Uttar Pradesh',
+    stock: 73,
+    tags: ['tulsi', 'holy basil', 'elixir', 'daily ritual', 'tea'],
+    featured: true,
+    isNew: true,
+    visual: {
+      form: 'dropper',
+      glass: '#22392b',
+      liquid: '#33543d',
+      label: '#f4efe3',
+      accent: '#8aa48c',
+    },
+  },
+  {
+    id: 'arn-004',
+    name: 'Amla Wellness Blend',
+    slug: 'amla-wellness-blend',
+    category: 'wellness',
+    shortDescription: 'Sun-dried amla powder blended with a touch of licorice for a gentler edge.',
+    description:
+      'Amla — Indian gooseberry — holds a place of honour in Ayurvedic tradition as one of the most valued fruits for daily use. Ours comes from orchards in Madhya Pradesh, sun-dried whole and stone-milled fine. A small proportion of yashtimadhu (licorice root) rounds off amla’s natural tartness, making the blend easy to take stirred into water or honey each morning.',
+    price: 649,
+    rating: 4.6,
+    reviewCount: 142,
+    ingredients: [
+      { name: 'Amla fruit powder', note: 'Emblica officinalis' },
+      { name: 'Licorice root powder', note: 'Glycyrrhiza glabra' },
+    ],
+    benefits: [
+      'Amla is traditionally taken daily in Ayurveda as a nourishing fruit',
+      'Fine-milled for smooth mixing into water, honey, or smoothies',
+      'Just two ingredients, nothing added',
+    ],
+    usage:
+      'Half a teaspoon stirred into a glass of water, honey, or your morning smoothie. Traditionally taken on waking.',
+    origin: 'Vindhya hills, Madhya Pradesh',
+    stock: 36,
+    tags: ['amla', 'gooseberry', 'vitamin', 'morning ritual', 'powder'],
+    featured: true,
+    visual: {
+      form: 'jar',
+      glass: '#6b7a4a',
+      liquid: '#93a45e',
+      label: '#f4efe3',
+      accent: '#5d8266',
+    },
+  },
+  {
+    id: 'arn-005',
+    name: 'Brahmi Botanical',
+    slug: 'brahmi-botanical',
+    category: 'herbal-supplements',
+    shortDescription:
+      'Water-grown Brahmi leaves, gently dried and encapsulated for study-seasons and busy minds.',
+    description:
+      'Brahmi (Bacopa monnieri) grows wild along Kerala’s slow backwaters, where our partner farmers wade through shallow paddies to hand-pick the creeping leaves. Dried below forty degrees to protect its delicate constituents, then encapsulated whole. In Ayurvedic tradition brahmi is associated with the mind — students have kept it company during exam seasons for hundreds of years.',
+    price: 849,
+    rating: 4.7,
+    reviewCount: 98,
+    ingredients: [{ name: 'Brahmi whole leaf powder', note: 'Bacopa monnieri' }],
+    benefits: [
+      'Brahmi is traditionally associated with clarity and meditative practice',
+      'Shade-dried to protect delicate botanical compounds',
+      'Single herb, whole leaf',
+    ],
+    usage:
+      'One capsule morning and evening with warm water. Many take theirs alongside a few minutes of quiet breathing.',
+    origin: 'Kuttanad backwaters, Kerala',
+    stock: 27,
+    tags: ['brahmi', 'bacopa', 'mind', 'focus', 'study'],
+    featured: true,
+    visual: {
+      form: 'flask',
+      glass: '#2e4a38',
+      liquid: '#44684c',
+      label: '#f4efe3',
+      accent: '#a9824e',
+    },
+  },
+  {
+    id: 'arn-006',
+    name: 'Neem Care Serum',
+    slug: 'neem-care-serum',
+    category: 'skin-care',
+    shortDescription:
+      'A lightweight neem-and-tea serum for skin that prefers gentle, plant-first care.',
+    description:
+      'Neem has watched over Indian skin rituals for millennia. Our serum begins with cold-pressed neem seed oil from the Deccan, lightened with grapeseed and sweet almond carriers so it never sits heavy. A trace of tea tree rounds out the blend. Two drops at night is all a routine needs.',
+    price: 599,
+    rating: 4.5,
+    reviewCount: 167,
+    ingredients: [
+      { name: 'Cold-pressed neem seed oil', note: 'Azadirachta indica' },
+      { name: 'Grapeseed oil', note: 'Vitis vinifera' },
+      { name: 'Sweet almond oil', note: 'Prunus dulcis' },
+      { name: 'Tea tree essential oil', note: 'Melaleuca alternifolia' },
+    ],
+    benefits: [
+      'Neem has been part of traditional Indian skin care for centuries',
+      'Fast-absorbing carrier-oil base, non-comedogenic',
+      'Best used as part of a night-time ritual',
+    ],
+    usage:
+      'After cleansing, warm two or three drops between fingertips and press gently onto the face. Patch-test first; avoid if pregnant.',
+    origin: 'Deccan plateau',
+    stock: 51,
+    tags: ['neem', 'serum', 'night ritual', 'skin', 'clarifying'],
+    isNew: true,
+    visual: {
+      form: 'dropper',
+      glass: '#31402c',
+      liquid: '#55663d',
+      label: '#f4efe3',
+      accent: '#a8bcab',
+    },
+  },
+  {
+    id: 'arn-007',
+    name: 'Rose & Sandal Cream',
+    slug: 'rose-sandal-cream',
+    category: 'skin-care',
+    shortDescription:
+      'Kannauj rose water whipped into a sandalwood cream — a morning ritual from the perfume city.',
+    description:
+      'Kannauj has distilled roses since the days of the Mughal ateliers. We fold that same rose water into a cream built on cold-pressed oils and a whisper of Mysore-style sandalwood paste. The result is weightless hydration with the quiet fragrance of a temple courtyard at dawn.',
+    price: 899,
+    rating: 4.6,
+    reviewCount: 121,
+    ingredients: [
+      { name: 'Kannauj rose water', note: 'Rosa damascena' },
+      { name: 'Sandalwood paste', note: 'Santalum album' },
+      { name: 'Cold-pressed sesame oil', note: 'Sesamum indicum' },
+      { name: 'Beeswax & aloe juice base', note: 'free of mineral oils' },
+    ],
+    benefits: [
+      'Built on two of India’s most storied aromatics — rose and sandal',
+      'Light enough under makeup, rich enough alone',
+      'Fragranced only by its own botanicals',
+    ],
+    usage:
+      'Smooth a pearl-sized amount over damp skin each morning. Store away from direct sunlight.',
+    origin: 'Kannauj, Uttar Pradesh',
+    stock: 33,
+    tags: ['rose', 'sandalwood', 'moisturiser', 'morning ritual', 'cream'],
+    visual: {
+      form: 'jar',
+      glass: '#b98d84',
+      liquid: '#e8cfc7',
+      label: '#faf7f0',
+      accent: '#c29a64',
+    },
+  },
+  {
+    id: 'arn-008',
+    name: 'Bhringraj Hair Oil',
+    slug: 'bhringraj-hair-oil',
+    category: 'hair-care',
+    shortDescription:
+      'The classic champi oil — bhringraj simmered in coconut and sesame, exactly as grandmothers insist.',
+    description:
+      'No shortcut here: bhringraj leaves are slowly simmered into a base of virgin coconut and black sesame oil in a copper vessel, the way Kerala households have done on wood stoves for generations. Strained twice and bottled warm. Sunday champi nights exist for a reason.',
+    price: 699,
+    compareAtPrice: 799,
+    rating: 4.8,
+    reviewCount: 243,
+    ingredients: [
+      { name: 'Bhringraj leaf infusion', note: 'Eclipta alba' },
+      { name: 'Virgin coconut oil', note: 'Cocos nucifera' },
+      { name: 'Black sesame oil', note: 'Sesamum indicum' },
+      { name: 'Curry leaf & hibiscus', note: 'traditional additions' },
+    ],
+    benefits: [
+      'Prepared by slow decoction, not fragrance blending',
+      'Coconut-sesame base chosen for easy wash-out',
+      'Made for the traditional weekly head massage',
+    ],
+    usage:
+      'Warm a little oil between palms, massage into scalp, leave for an hour or overnight, then wash. Once or twice a week.',
+    origin: 'Thrissur, Kerala',
+    stock: 64,
+    tags: ['bhringraj', 'hair oil', 'champi', 'scalp massage', 'weekly ritual'],
+    featured: true,
+    visual: {
+      form: 'pump',
+      glass: '#4a3d22',
+      liquid: '#7d6531',
+      label: '#f4efe3',
+      accent: '#dcc091',
+    },
+  },
+  {
+    id: 'arn-009',
+    name: 'Hibiscus Shine Rinse',
+    slug: 'hibiscus-shine-rinse',
+    category: 'hair-care',
+    shortDescription:
+      'A final-rinse infusion of hibiscus petals and shikakai for soft, glossy finishes.',
+    description:
+      'South Indian hair traditions end washing with a fragrant pour-through, and hibiscus is its most beloved flower. We dry whole petals and pods of shikakai, then cut them coarsely so they release their slip in hot water. Steep, strain, pour — hair is left feeling coated in softness rather than silicone.',
+    price: 549,
+    rating: 4.4,
+    reviewCount: 76,
+    ingredients: [
+      { name: 'Hibiscus petals', note: 'Hibiscus rosa-sinensis' },
+      { name: 'Shikakai pods', note: 'Acacia concinna' },
+      { name: 'Dried curry leaves', note: 'Murraya koenigii' },
+    ],
+    benefits: [
+      'The traditional final rinse of South Indian hair care',
+      'Naturally slippery — no silicones needed',
+      'Twelve rinses per pack',
+    ],
+    usage:
+      'Steep two spoonfuls in hot water for 20 minutes, strain cool, and pour through freshly washed hair as a final rinse.',
+    origin: 'Western Ghats foothills',
+    stock: 88,
+    tags: ['hibiscus', 'rinse', 'shine', 'shikakai', 'hair'],
+    visual: {
+      form: 'tin',
+      glass: '#7d3040',
+      liquid: '#a94a5c',
+      label: '#f4efe3',
+      accent: '#a85a38',
+    },
+  },
+  {
+    id: 'arn-010',
+    name: 'Vetiver Body Wash',
+    slug: 'vetiver-body-wash',
+    category: 'personal-care',
+    shortDescription:
+      'A cooling, earthy body wash built on real vetiver roots, not synthetic fragrance.',
+    description:
+      'Khus — vetiver — is the smell of Indian summer: woven screens, cooling drinks, cracked earth after rain. Our wash is built on a slow infusion of actual vetiver roots from Tamil Nadu, with mild sugar-derived cleansers and nothing that strips. The lather is low, the scent stays true, and skin feels like it belongs to you afterwards.',
+    price: 549,
+    rating: 4.5,
+    reviewCount: 134,
+    ingredients: [
+      { name: 'Vetiver root infusion', note: 'Chrysopogon zizanioides' },
+      { name: 'Sugar-derived cleansers', note: 'sulfate-free' },
+      { name: 'Glycerin', note: 'plant-derived' },
+    ],
+    benefits: [
+      'Real root infusion — vetiver is prized in India for its cooling character',
+      'Sulfate-free, pH-balanced, biodegradable formula',
+      'Low-lather and honest',
+    ],
+    usage: 'Work over wet skin and rinse. Follow with our Rose & Sandal Cream if skin runs dry.',
+    origin: 'Cuddalore, Tamil Nadu',
+    stock: 95,
+    tags: ['vetiver', 'khus', 'body wash', 'cooling', 'summer'],
+    visual: {
+      form: 'pump',
+      glass: '#3f4a41',
+      liquid: '#6d7d68',
+      label: '#f4efe3',
+      accent: '#8aa48c',
+    },
+  },
+  {
+    id: 'arn-011',
+    name: 'Blue Pea & Lemongrass Tisane',
+    slug: 'blue-pea-lemongrass-tisane',
+    category: 'herbal-drinks',
+    shortDescription: 'An afternoon tisane that steeps cobalt and calms like a long exhale.',
+    description:
+      'Butterfly pea flowers from the Western Ghats steep into an astonishing cobalt liquor; squeeze lemon and watch it turn violet. Lemongrass from the same hills keeps things bright. Caffeine-free, endlessly pretty, and quietly becoming the afternoon ritual of everyone who tries it.',
+    price: 429,
+    rating: 4.7,
+    reviewCount: 89,
+    ingredients: [
+      { name: 'Butterfly pea flowers', note: 'Clitoria ternatea' },
+      { name: 'Lemongrass', note: 'Cymbopogon citratus' },
+      { name: 'Dried lime peel', note: 'no flavourings' },
+    ],
+    benefits: [
+      'Caffeine-free afternoon ritual',
+      'Colour-changing brew — cobalt to violet with citrus',
+      'Twenty-five cups per tin',
+    ],
+    usage:
+      'Steep a heaped teaspoon in hot water for four minutes. Add lemon for the colour change and a spoon of honey if you like.',
+    origin: 'Western Ghats',
+    stock: 120,
+    tags: ['blue pea', 'tisane', 'tea', 'caffeine-free', 'afternoon'],
+    isNew: true,
+    visual: {
+      form: 'tin',
+      glass: '#2c4a7c',
+      liquid: '#41649e',
+      label: '#f4efe3',
+      accent: '#a9824e',
+    },
+  },
+  {
+    id: 'arn-012',
+    name: 'Kumkumadi Night Oil',
+    slug: 'kumkumadi-night-oil',
+    category: 'skin-care',
+    shortDescription:
+      'The classical kumkumadi tailam, batch-prepared over three days with Kashmiri saffron.',
+    description:
+      'Kumkumadi tailam is perhaps Ayurveda’s most famous facial formulation, named for kumkuma — saffron. Ours follows the classical ingredient list: saffron threads, manjistha, licorice, lotus stamens and sixteen companions, slow-cooked into sesame oil across three days. It is expensive to make honestly, which is why so little is made.',
+    price: 1299,
+    compareAtPrice: 1499,
+    rating: 4.9,
+    reviewCount: 203,
+    ingredients: [
+      { name: 'Kashmiri saffron', note: 'Crocus sativus' },
+      { name: 'Manjistha root', note: 'Rubia cordifolia' },
+      { name: 'Licorice & lotus stamens', note: 'classical pairing' },
+      { name: 'Cold-pressed sesame oil base', note: 'three-day preparation' },
+    ],
+    benefits: [
+      'Follows the classical kumkumadi tailam ingredient list',
+      'Three-day slow-cooked preparation in small batches',
+      'A night-time ritual in the truest sense',
+    ],
+    usage:
+      'Three drops warmed between palms, pressed onto cleansed skin thirty minutes before bed. Use three nights a week to begin.',
+    origin: 'Pampore saffron fields, Kashmir',
+    stock: 19,
+    tags: ['kumkumadi', 'saffron', 'face oil', 'night ritual', 'classical'],
+    featured: true,
+    visual: {
+      form: 'dropper',
+      glass: '#6e2f1e',
+      liquid: '#b3502a',
+      label: '#f4efe3',
+      accent: '#dcc091',
+    },
+  },
+  {
+    id: 'arn-013',
+    name: 'Triphala Tablets',
+    slug: 'triphala-tablets',
+    category: 'herbal-supplements',
+    shortDescription:
+      'The three-fruit classic — amalaki, bibhitaki, haritaki — in a simple pressed tablet.',
+    description:
+      'Triphala, "the three fruits", may be the most prescribed formulation in classical Ayurveda. We source all three fruits from their respective heartlands, grind them separately, and press them together without excipients. The taste is famously complex — which is why the tablet form exists.',
+    price: 549,
+    rating: 4.6,
+    reviewCount: 158,
+    ingredients: [
+      { name: 'Amalaki fruit', note: 'Emblica officinalis' },
+      { name: 'Bibhitaki fruit', note: 'Terminalia bellirica' },
+      { name: 'Haritaki fruit', note: 'Terminalia chebula' },
+    ],
+    benefits: [
+      'The classical three-fruit formulation of Ayurveda',
+      'No excipients — pressed from pure fruit powders',
+      'Traditionally part of evening routines',
+    ],
+    usage:
+      'Two tablets with warm water before bed. Triphala is traditionally cycled — three months on, a few weeks off.',
+    origin: 'Multi-origin: MP, Odisha & the Nilgiris',
+    stock: 77,
+    tags: ['triphala', 'digestion', 'three fruits', 'evening ritual', 'classic'],
+    visual: {
+      form: 'flask',
+      glass: '#59431f',
+      liquid: '#86682f',
+      label: '#f4efe3',
+      accent: '#c29a64',
+    },
+  },
+  {
+    id: 'arn-014',
+    name: 'Cardamom Cocoa Ritual Tea',
+    slug: 'cardamom-cocoa-ritual-tea',
+    category: 'herbal-drinks',
+    shortDescription:
+      'A dessert-leaning tisane of roasted cocoa husk, cardamom and vanilla bean — evening indulgence without caffeine.',
+    description:
+      'Built for the hour after dinner when you want something indulgent but sleep-friendly. Roasted cocoa husks lend a chocolate-shop depth, Idukki cardamom perfumes the cup, and a sliver of vanilla bean ties it together. Naturally caffeine-free. Best sipped slowly from your favourite cup.',
+    price: 479,
+    rating: 4.8,
+    reviewCount: 112,
+    ingredients: [
+      { name: 'Roasted cocoa husk', note: 'Theobroma cacao' },
+      { name: 'Green cardamom pods', note: 'Elettaria cardamomum' },
+      { name: 'Vanilla bean slivers', note: 'natural, not flavouring' },
+    ],
+    benefits: [
+      'All the comfort of drinking chocolate, none of the caffeine',
+      'Spiced the Idukki way — real pods, never essence',
+      'Eighteen servings per tin',
+    ],
+    usage:
+      'Steep one heaped teaspoon in just-off-boil water for five minutes. Wonderful with warm milk.',
+    origin: 'Idukki, Kerala',
+    stock: 104,
+    tags: ['cardamom', 'cocoa', 'dessert tea', 'evening ritual', 'caffeine-free'],
+    visual: {
+      form: 'tin',
+      glass: '#503a2e',
+      liquid: '#75513c',
+      label: '#f4efe3',
+      accent: '#dcc091',
+    },
+  },
+  {
+    id: 'arn-015',
+    name: 'Shatavari Root Powder',
+    slug: 'shatavari-root-powder',
+    category: 'herbal-supplements',
+    shortDescription:
+      'Cooling shatavari tubers from the Satpura ranges, dried whole and stone-milled fine.',
+    description:
+      'Shatavari — "she of a hundred roots" — is among Ayurveda’s most cherished women’s herbs. Ours is grown on the forest edges of the Satpura ranges, where the tubers mature for a full monsoon cycle before hand harvest. Washed, shade-dried, and milled to a silky powder with a faintly sweet, nutty taste that stirs easily into warm milk.',
+    price: 699,
+    rating: 4.7,
+    reviewCount: 87,
+    ingredients: [{ name: 'Shatavari tuber powder', note: 'Asparagus racemosus' }],
+    benefits: [
+      'Traditionally taken in Ayurveda as a nourishing tonic',
+      'Single-ingredient powder with nothing added',
+      'Stirs smoothly into milk or plant milks',
+    ],
+    usage: 'Half a teaspoon stirred into warm milk with a pinch of cardamom, morning or evening.',
+    origin: 'Satpura ranges, Madhya Pradesh',
+    stock: 48,
+    tags: ['shatavari', 'tonic', 'women', 'milk ritual', 'powder'],
+    visual: {
+      form: 'jar',
+      glass: '#8a7a4a',
+      liquid: '#b3a06a',
+      label: '#f4efe3',
+      accent: '#c29a64',
+    },
+  },
+  {
+    id: 'arn-016',
+    name: 'Giloy Stem Capsules',
+    slug: 'giloy-stem-capsules',
+    category: 'wellness',
+    shortDescription:
+      'Guduchi (giloy) stems from organic vines in Odisha, cut and encapsulated whole.',
+    description:
+      'Giloy climbs the neem trees of our Odisha partner farms, drawing a reputation as the "root of immortality" in classical texts. We use only the mature stem — no leaves, no fillers — sun-cured and milled coarse before encapsulation. A bitter herb by nature, which is exactly the point.',
+    price: 579,
+    rating: 4.4,
+    reviewCount: 64,
+    ingredients: [{ name: 'Giloy stem powder', note: 'Tinospora cordifolia' }],
+    benefits: [
+      'One of Ayurveda’s most cited bitter tonics',
+      'Whole-stem powder, never extract-standardised',
+      'Seasonal wellness staple during monsoon transitions',
+    ],
+    usage:
+      'One capsule twice daily with warm water after meals. Traditionally taken through seasonal changes.',
+    origin: 'Keonjhar forests, Odisha',
+    stock: 14,
+    tags: ['giloy', 'guduchi', 'immunity', 'bitter', 'seasonal'],
+    isNew: true,
+    visual: {
+      form: 'flask',
+      glass: '#4a5a34',
+      liquid: '#6b7a45',
+      label: '#f4efe3',
+      accent: '#93a45e',
+    },
+  },
+  {
+    id: 'arn-017',
+    name: 'Moringa Leaf Powder',
+    slug: 'moringa-leaf-powder',
+    category: 'wellness',
+    shortDescription:
+      ' Shade-dried drumstick leaves from Tamil Nadu farms, milled within hours of picking.',
+    description:
+      'The moringa tree feeds more households in India than any superfood marketing would have you believe. Our leaves are picked at dawn from pesticide-free farms near Erode and dried in shaded racks the same day, keeping their colour a deep, honest green. Stir it into anything — it asks only for citrus.',
+    price: 449,
+    rating: 4.5,
+    reviewCount: 103,
+    ingredients: [{ name: 'Moringa leaf powder', note: 'Moringa oleifera' }],
+    benefits: [
+      'A traditional green used across Indian kitchens for generations',
+      'Same-day shade drying preserves colour and character',
+      'One ingredient, farm-direct',
+    ],
+    usage:
+      'A teaspoon into smoothies, dals, or warm water with lemon. Begin with less — moringa is assertive.',
+    origin: 'Erode, Tamil Nadu',
+    stock: 66,
+    tags: ['moringa', 'drumstick', 'greens', 'smoothie', 'daily ritual'],
+    visual: {
+      form: 'jar',
+      glass: '#3d5a35',
+      liquid: '#5d8266',
+      label: '#f4efe3',
+      accent: '#93a45e',
+    },
+  },
+  {
+    id: 'arn-018',
+    name: 'Ubtan Face Mask',
+    slug: 'ubtan-face-mask',
+    category: 'skin-care',
+    shortDescription:
+      'The wedding-morning classic: chickpea flour, turmeric, rose — mixed fresh each time.',
+    description:
+      'Every Indian wedding begins with ubtan, the grain-and-spice paste applied before the ceremony. Ours honours the recipe: Besan ground from chana dal, a measured pinch of Lakadong turmeric, crushed rose petals from Kannauj, and powdered almond. You add the liquid — water, milk, curd, or rose water — so every application is freshly mixed, as tradition demands.',
+    price: 529,
+    rating: 4.6,
+    reviewCount: 91,
+    ingredients: [
+      { name: 'Chickpea (besan) flour', note: 'Cicer arietinum' },
+      { name: 'Lakadong turmeric', note: 'Curcuma longa' },
+      { name: 'Kannauj rose petals', note: 'Rosa damascena' },
+      { name: 'Powdered almonds', note: 'Prunus dulcis' },
+    ],
+    benefits: [
+      'Mixed fresh at home — no preservatives needed or included',
+      'The traditional pre-celebration skin ritual in dry form',
+      'Twelve masks per jar',
+    ],
+    usage:
+      'Two spoons mixed with water or curd into a paste. Apply, rest ten minutes, rinse while massaging gently.',
+    origin: 'Multi-origin: MP, Meghalaya & Kannauj',
+    stock: 58,
+    tags: ['ubtan', 'face mask', 'turmeric', 'wedding ritual', 'weekly ritual'],
+    visual: {
+      form: 'tin',
+      glass: '#c9a13c',
+      liquid: '#e3c46a',
+      label: '#faf7f0',
+      accent: '#a85a38',
+    },
+  },
+  {
+    id: 'arn-019',
+    name: 'Aloe & Cucumber Gel',
+    slug: 'aloe-cucumber-gel',
+    category: 'personal-care',
+    shortDescription:
+      'A cooling all-over gel of fresh aloe pulp and cucumber juice for sun-tired skin.',
+    description:
+      'Built the way Indian homes make it in summer: aloe leaves filleted by hand within a day of harvest, cucumber juice pressed fresh, and a trace of guar gum from cluster beans to hold it together. Keep it in the fridge and it becomes the best part of coming home in May.',
+    price: 379,
+    rating: 4.4,
+    reviewCount: 128,
+    ingredients: [
+      { name: 'Fresh aloe vera pulp', note: 'Aloe barbadensis' },
+      { name: 'Cucumber juice', note: 'Cucumis sativus' },
+      { name: 'Cluster bean gum', note: 'natural thickener' },
+    ],
+    benefits: [
+      'Made from fresh-cut aloe, not reconstituted powder',
+      'The classic Indian summer cooler for face, body and scalp',
+      'Fragrance-free and light as water',
+    ],
+    usage:
+      'Smooth over sun-exposed skin whenever needed. Refrigerate for extra cooling; use within two months.',
+    origin: 'Kutch aloe belt, Gujarat',
+    stock: 18,
+    tags: ['aloe', 'cooling', 'summer', 'after-sun', 'gel'],
+    visual: {
+      form: 'tube',
+      glass: '#7fa88f',
+      liquid: '#b8d4bf',
+      label: '#f4efe3',
+      accent: '#5d8266',
+    },
+  },
+  {
+    id: 'arn-020',
+    name: 'Amla Deep Hair Mask',
+    slug: 'amla-deep-hair-mask',
+    category: 'hair-care',
+    shortDescription:
+      'A pre-wash hair mask of amla, fenugreek and yogurt powder for deep weekly conditioning.',
+    description:
+      'Between oil-champi Sundays, North Indian hair care calls for a curd-and-amla mask. We dried the ritual into a jar: amla powder, soaked-and-dried fenugreek seeds ground fine, and cultured milk powder that turns your mix naturally creamy. Mix with water, rest twenty minutes, wash out — hair feels like you spent the afternoon at a nani’s house.',
+    price: 649,
+    rating: 4.5,
+    reviewCount: 59,
+    ingredients: [
+      { name: 'Amla fruit powder', note: 'Emblica officinalis' },
+      { name: 'Fenugreek seed powder', note: 'Trigonella foenum-graecum' },
+      { name: 'Cultured milk powder', note: 'the traditional curd base, dried' },
+    ],
+    benefits: [
+      'The curd-amla hair ritual in a ready-to-mix jar',
+      'Fenugreek slip makes detangling effortless',
+      'Six generous treatments',
+    ],
+    usage:
+      'Three spoons mixed with warm water into a paste. Apply root to tip, rest twenty minutes, shampoo out.',
+    origin: 'Vindhya hills, Madhya Pradesh',
+    stock: 31,
+    tags: ['amla', 'hair mask', 'fenugreek', 'deep condition', 'weekly ritual'],
+    visual: {
+      form: 'jar',
+      glass: '#5a6b3d',
+      liquid: '#7d8f52',
+      label: '#f4efe3',
+      accent: '#93a45e',
+    },
+  },
+  {
+    id: 'arn-021',
+    name: 'Kesar Milk Masala',
+    slug: 'kesar-milk-masala',
+    category: 'herbal-drinks',
+    shortDescription:
+      'Saffron, cardamom and nutmeg blended for stirring into warm milk — bedtime, upgraded.',
+    description:
+      'The masala dabba behind a proper glass of doodh: Pampore saffron threads crumbled by hand, Idukki green cardamom, a whisper of javitri (mace) and nutmeg, all milled together with rock sugar. Two pinches into hot milk and the kitchen smells like a winter night in a hill-station dak bungalow.',
+    price: 849,
+    compareAtPrice: 999,
+    rating: 4.9,
+    reviewCount: 74,
+    ingredients: [
+      { name: 'Kashmiri saffron', note: 'Crocus sativus' },
+      { name: 'Green cardamom & mace', note: 'Elettaria & Myristica' },
+      { name: 'Nutmeg & rock sugar', note: 'traditionally warming pairing' },
+    ],
+    benefits: [
+      'Real saffron threads, not essence',
+      'Turns plain milk into an occasion in under a minute',
+      'Twenty servings per tin',
+    ],
+    usage:
+      'Two pinches stirred into a cup of hot milk. Sweeten further if you must; we don’t think you will.',
+    origin: 'Pampore, Kashmir & Idukki, Kerala',
+    stock: 3,
+    tags: ['saffron', 'kesar', 'milk masala', 'bedtime ritual', 'winter'],
+    featured: true,
+    isNew: true,
+    visual: {
+      form: 'tin',
+      glass: '#7d3040',
+      liquid: '#b3502a',
+      label: '#faf7f0',
+      accent: '#c29a64',
+    },
+  },
+  {
+    id: 'arn-022',
+    name: 'Neem & Tulsi Face Wash',
+    slug: 'neem-tulsi-face-wash',
+    category: 'personal-care',
+    shortDescription:
+      'A gentle daily face wash built on neem and tulsi infusions, sulfate-free as always.',
+    description:
+      'Two herbs that have cleaned Indian skin longer than soap has existed here. Neem leaf and tulsi are slow-infused into the formula rather than dropped in as essential oils, so the wash cleanses without stripping or scenting aggressively. Sugar-derived surfactants do the lifting; nothing does the stripping.',
+    price: 399,
+    rating: 4.3,
+    reviewCount: 96,
+    ingredients: [
+      { name: 'Neem leaf infusion', note: 'Azadirachta indica' },
+      { name: 'Tulsi leaf infusion', note: 'Ocimum sanctum' },
+      { name: 'Sugar-derived cleansers', note: 'sulfate-free' },
+    ],
+    benefits: [
+      'True herbal infusion, not fragrance oils',
+      'Sulfate-free and pH-balanced for daily use',
+      'Morning-and-evening simple',
+    ],
+    usage:
+      'Massage over damp skin morning and evening; rinse well. Follow with Rose & Sandal Cream or Kumkumadi Night Oil.',
+    origin: 'Deccan plateau',
+    stock: 84,
+    tags: ['neem', 'tulsi', 'face wash', 'daily ritual', 'clarifying'],
+    visual: {
+      form: 'pump',
+      glass: '#31402c',
+      liquid: '#55663d',
+      label: '#f4efe3',
+      accent: '#8aa48c',
+    },
+  },
+]
+
+export const productBySlug = (slug: string): Product | undefined =>
+  products.find((p) => p.slug === slug)
+
+export const productById = (id: string): Product | undefined => products.find((p) => p.id === id)

@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aranya
+      POSTGRES_PASSWORD: aranya
+      POSTGRES_DB: aranya
+    ports:
+      - '55432:5432'
+    volumes:
+      - aranya-pgdata:/var/lib/postgresql/data
+      # Also creates the aranya_test (Vitest) and aranya_e2e (Playwright) databases.
+      - ./server/tests/init-test-db.sql:/docker-entrypoint-initdb.d/10-test-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U aranya -d aranya']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  aranya-pgdata:

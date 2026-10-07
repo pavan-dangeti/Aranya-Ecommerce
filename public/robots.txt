@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-# Deployment configuration: uncomment and set the production domain at release.
-# Sitemap: https://your-production-domain.example/sitemap.xml

@@ -1,0 +1,16 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.github
+web/*
+!web/package.json
+docs
+dist
+coverage
+playwright-report
+test-results
+.env
+.env.*
+!.env.example
+*.log

@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: aranya-api
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RUN_MIGRATIONS
+        value: 'true'
+      - key: PORT
+        value: 8787
+      - key: LOG_LEVEL
+        value: info
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_TTL
+        value: 900
+      - key: REFRESH_TOKEN_TTL_DAYS
+        value: 30
+      - key: CORS_ORIGINS
+        sync: false
+      # Vercel proxies /api/* to this service, so the browser sees one origin
+      # and the refresh cookie can stay SameSite=Lax.
+      - key: COOKIE_SAME_SITE
+        value: lax
+      - key: PUBLIC_APP_URL
+        sync: false
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: PAYMENT_PROVIDER
+        value: simulated
+      # Vercel edge, then Render's own proxy.
+      - key: TRUST_PROXY_HOPS
+        value: 2

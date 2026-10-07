@@ -1,42 +1,58 @@
 {
   "name": "aranya",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "ARANYA — Ancient Wisdom. Naturally Reimagined. A premium 3D herbal wellness e-commerce experience.",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src"
+  "description": "ARANYA — Ancient Wisdom. Naturally Reimagined. A premium 3D herbal wellness e-commerce platform.",
+  "engines": {
+    "node": ">=22"
   },
-  "dependencies": {
-    "@fontsource-variable/fraunces": "^5.2.5",
-    "@fontsource-variable/manrope": "^5.2.5",
-    "@react-three/drei": "^10.5.0",
-    "@react-three/fiber": "^9.3.0",
-    "framer-motion": "^12.23.0",
-    "lucide-react": "^0.525.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router": "^7.6.0",
-    "three": "^0.180.0",
-    "zustand": "^5.0.6"
+  "workspaces": [
+    "web",
+    "server",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build:packages && concurrently -n api,web -c magenta,cyan \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @aranya/server",
+    "dev:web": "npm run dev -w @aranya/web",
+    "build": "npm run build:packages && npm run build -w @aranya/server && npm run build -w @aranya/web",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "npm run build:packages && npm run typecheck --workspaces --if-present && tsc -p e2e",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "knip": "knip",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:migrate": "npm run db:migrate -w @aranya/server",
+    "db:seed": "npm run db:seed -w @aranya/server",
+    "db:reset": "npm run db:reset -w @aranya/server",
+    "verify": "npm run lint && npm run typecheck && npm run knip && npm run format:check && npm run test && npm run build && npm run check:bundle",
+    "test:e2e": "playwright test",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "build:packages": "npm run build -w @aranya/shared && npm run build -w @aranya/data",
+    "media": "CAPTURE_MEDIA=1 playwright test e2e/media.spec.ts --project chromium",
+    "db:setup": "npm run build:packages && npm run db:migrate && npm run db:seed"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^9.32.0",
-    "@tailwindcss/vite": "^4.1.11",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^5.0.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.15.0",
+    "concurrently": "^10.0.5",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
-    "tailwindcss": "^4.1.11",
+    "knip": "^6.39.0",
+    "prettier": "^3.9.9",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "^7.1.0"
+    "vitest": "^5.0.3"
+  },
+  "overrides": {
+    "shell-quote": "^1.12.0",
+    "source-map-js": "^1.2.2"
   }
 }
