@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { isTrustedDevice, refreshCookieOptions } from '../src/lib/tokens.js'
+import { DEVICE_TOKEN_TTL_MS, isTrustedDevice, refreshCookieOptions } from '../src/lib/tokens.js'
 import { clientKey } from '../src/middleware/rate-limit.js'
 import * as authService from '../src/services/auth.service.js'
 import { db } from '../src/db/client.js'
@@ -176,7 +176,10 @@ describe('login', () => {
   })
 
   it("caps guesses spread across many clients, but not on the owner's known device", async () => {
-    await registerCustomer('spread@example.com')
+    const owner = await authService.register(
+      { name: 'Spread', email: 'spread@example.com', password: 'Passw0rd!23' },
+      {},
+    )
     for (let i = 0; i < 30; i++) {
       await authService
         .login({ email: 'spread@example.com', password: 'nope' }, { ip: `198.51.100.${i}` })
@@ -191,12 +194,12 @@ describe('login', () => {
     await expect(
       authService.login(
         { email: 'spread@example.com', password: 'Passw0rd!23' },
-        { ip: '203.0.113.99', trustedDevice: true },
+        { ip: '203.0.113.99', deviceToken: owner.deviceToken },
       ),
     ).resolves.toMatchObject({ user: { email: 'spread@example.com' } })
   })
 
-  it('marks a browser as a known device only for the account it signed in to', async () => {
+  it('issues a device cookie bound to the account and its current password', async () => {
     const res = await request('/auth/register', {
       method: 'POST',
       body: JSON.stringify({
@@ -207,10 +210,49 @@ describe('login', () => {
     })
     const cookie = res.headers.getSetCookie().find((c) => c.startsWith('aranya_device='))
     expect(cookie).toMatch(/HttpOnly/i)
-    const token = cookie!.split(';')[0]!.split('=')[1]
-    expect(isTrustedDevice('device@example.com', token)).toBe(true)
-    expect(isTrustedDevice('someone.else@example.com', token)).toBe(false)
-    expect(isTrustedDevice('device@example.com', 'forged')).toBe(false)
+    const token = cookie!.split(';')[0]!.slice('aranya_device='.length)
+    const user = (await db.select().from(users).where(eq(users.email, 'device@example.com')))[0]!
+    const other = { id: crypto.randomUUID(), passwordChangedAt: null }
+
+    expect(isTrustedDevice(user, token)).toBe(true)
+    expect(isTrustedDevice(other, token)).toBe(false)
+    expect(isTrustedDevice(user, 'forged')).toBe(false)
+    expect(isTrustedDevice(user, `${Date.now()}.${token.split('.')[1]}`)).toBe(false)
+  })
+
+  it('revokes device tokens when the password changes, and expires them', async () => {
+    const session = await authService.register(
+      { name: 'Rotate', email: 'rotate@example.com', password: 'Passw0rd!23' },
+      {},
+    )
+    const before = (await db.select().from(users).where(eq(users.email, 'rotate@example.com')))[0]!
+    expect(isTrustedDevice(before, session.deviceToken)).toBe(true)
+    expect(isTrustedDevice(before, session.deviceToken, Date.now() + DEVICE_TOKEN_TTL_MS + 1)).toBe(
+      false,
+    )
+
+    await authService.changePassword(before.id, {
+      currentPassword: 'Passw0rd!23',
+      newPassword: 'N3w-Passw0rd!',
+    })
+    const after = (await db.select().from(users).where(eq(users.email, 'rotate@example.com')))[0]!
+    expect(isTrustedDevice(after, session.deviceToken)).toBe(false)
+  })
+
+  it('does not let a parallel burst exceed the per-client limit', async () => {
+    await registerCustomer('burst@example.com')
+    const statuses = await Promise.all(
+      Array.from({ length: 20 }, () =>
+        authService
+          .login({ email: 'burst@example.com', password: 'nope' }, { ip: '198.51.100.200' })
+          .then(
+            () => 200,
+            (err: { status?: number }) => err.status,
+          ),
+      ),
+    )
+    expect(statuses.filter((s) => s === 401)).toHaveLength(8)
+    expect(statuses.filter((s) => s === 429)).toHaveLength(12)
   })
 
   it('throttles unknown emails the same way, so a 429 reveals nothing', async () => {

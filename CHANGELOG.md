@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] - 2026-10-08
+
+### Security
+
+- Device cookies are now `issuedAt.HMAC(user, password version, issuedAt)`: they expire after 180 days and are revoked by any password change or reset, instead of being a permanent per-email value.
+- Sign-in attempts are counted before the password check runs, so a burst of parallel requests can no longer exceed the per-client or account-wide limit.
+
 ## [2.0.0] - 2026-10-07
 
 v2 turns the frontend prototype into a full-stack product. See
@@ -46,5 +53,6 @@ v2 turns the frontend prototype into a full-stack product. See
 
 - Initial frontend prototype: 3D storefront, shop, product pages, cart, checkout, auth screens and admin console on a simulated data layer.
 
+[2.0.1]: https://github.com/pavan-dangeti/Aranya-Ecommerce/releases/tag/v2.0.1
 [2.0.0]: https://github.com/pavan-dangeti/Aranya-Ecommerce/releases/tag/v2.0.0
 [1.0.0]: https://github.com/pavan-dangeti/Aranya-Ecommerce/commit/7e6c0f7

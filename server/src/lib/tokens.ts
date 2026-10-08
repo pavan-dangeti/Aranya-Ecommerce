@@ -80,20 +80,44 @@ export const refreshCookieOptions = (
 
 export const DEVICE_COOKIE = 'aranya_device'
 
-/**
- * Proof that this browser has signed in to `email` before. It lets the owner
- * through while the account-wide failure ceiling is blocking an attacker.
- */
-export function deviceToken(email: string): string {
-  return createHmac('sha256', env.JWT_SECRET)
-    .update(`device:${email.trim().toLowerCase()}`)
-    .digest('base64url')
+export const DEVICE_TOKEN_TTL_MS = 180 * 86_400_000
+
+interface DeviceSubject {
+  id: string
+  passwordChangedAt: Date | null
 }
 
-export function isTrustedDevice(email: string, token: string | undefined): boolean {
-  if (!token) return false
-  const expected = Buffer.from(deviceToken(email))
-  const actual = Buffer.from(token)
+const deviceMac = (user: DeviceSubject, issuedAt: number) =>
+  createHmac('sha256', env.JWT_SECRET)
+    .update(`device:${user.id}:${user.passwordChangedAt?.getTime() ?? 0}:${issuedAt}`)
+    .digest('base64url')
+
+/**
+ * Proof that this browser signed in to the account before, letting the owner
+ * through while the account-wide failure ceiling blocks an attacker. Bound to
+ * the password version, so changing or resetting the password revokes every
+ * device token, and it expires on its own.
+ */
+export function deviceToken(user: DeviceSubject, issuedAt = Date.now()): string {
+  return `${issuedAt}.${deviceMac(user, issuedAt)}`
+}
+
+export function isTrustedDevice(
+  user: DeviceSubject,
+  token: string | undefined,
+  now = Date.now(),
+): boolean {
+  const [issued, mac] = token?.split('.') ?? []
+  const issuedAt = Number(issued)
+  if (
+    !mac ||
+    !Number.isSafeInteger(issuedAt) ||
+    issuedAt > now ||
+    now - issuedAt > DEVICE_TOKEN_TTL_MS
+  )
+    return false
+  const expected = Buffer.from(deviceMac(user, issuedAt))
+  const actual = Buffer.from(mac)
   return actual.length === expected.length && timingSafeEqual(actual, expected)
 }
 

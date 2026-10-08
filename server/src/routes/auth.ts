@@ -21,10 +21,9 @@ import {
 import * as authService from '../services/auth.service.js'
 import {
   DEVICE_COOKIE,
+  DEVICE_TOKEN_TTL_MS,
   REFRESH_COOKIE,
   SESSION_HINT_COOKIE,
-  deviceToken,
-  isTrustedDevice,
   refreshCookieOptions,
 } from '../lib/tokens.js'
 import { unauthorized } from '../http/errors.js'
@@ -203,16 +202,18 @@ export function authRoutes(app: OpenAPIHono<AppEnv>) {
     const body = c.req.valid('json')
     const session = await authService.register(body, requestMeta(c))
     setRefreshCookie(c, session)
-    setDeviceCookie(c, body.email)
+    setDeviceCookie(c, session.deviceToken)
     return c.json(refreshEnvelope(session), 200)
   })
 
   app.openapi(loginRoute, async (c) => {
     const body = c.req.valid('json')
-    const trustedDevice = isTrustedDevice(body.email, getCookie(c, DEVICE_COOKIE))
-    const session = await authService.login(body, { ...requestMeta(c), trustedDevice })
+    const session = await authService.login(body, {
+      ...requestMeta(c),
+      deviceToken: getCookie(c, DEVICE_COOKIE),
+    })
     setRefreshCookie(c, session)
-    setDeviceCookie(c, body.email)
+    setDeviceCookie(c, session.deviceToken)
     return c.json(refreshEnvelope(session), 200)
   })
 
@@ -289,10 +290,10 @@ function setRefreshCookie(c: Parameters<typeof setCookie>[0], session: authServi
   })
 }
 
-function setDeviceCookie(c: Parameters<typeof setCookie>[0], email: string) {
-  setCookie(c, DEVICE_COOKIE, deviceToken(email), {
+function setDeviceCookie(c: Parameters<typeof setCookie>[0], token: string) {
+  setCookie(c, DEVICE_COOKIE, token, {
     ...refreshCookieOptions(COOKIE_SECURE),
-    maxAge: 180 * 86_400,
+    maxAge: DEVICE_TOKEN_TTL_MS / 1000,
   })
 }
 

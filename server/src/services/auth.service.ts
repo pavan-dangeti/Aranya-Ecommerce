@@ -6,9 +6,11 @@ import { passwordResetTokens, refreshTokens, users, type UserRow } from '../db/s
 import { badRequest, conflict, tooManyRequests, unauthorized } from '../http/errors.js'
 import { fakeVerify, hashPassword, needsRehash, verifyPassword } from '../lib/password.js'
 import {
+  deviceToken,
   generateRefreshToken,
   generateResetToken,
   hashToken,
+  isTrustedDevice,
   newFamilyId,
   refreshExpiry,
   signAccessToken,
@@ -47,11 +49,13 @@ export interface IssuedSession {
   expiresIn: number
 }
 
+type SignedInSession = IssuedSession & { deviceToken: string }
+
 async function issueSession(
   tx: Tx | Db,
   user: UserRow,
   meta: { userAgent?: string; ip?: string },
-): Promise<IssuedSession> {
+): Promise<SignedInSession> {
   const token = generateRefreshToken()
   const family = newFamilyId()
   const expiresAt = refreshExpiry()
@@ -73,13 +77,14 @@ async function issueSession(
     refreshExpiresAt: expiresAt,
     accessToken,
     expiresIn: env.ACCESS_TOKEN_TTL,
+    deviceToken: deviceToken(user),
   }
 }
 
 export async function register(
   input: { name: string; email: string; password: string; phone?: string },
   meta: { userAgent?: string; ip?: string },
-): Promise<IssuedSession> {
+): Promise<SignedInSession> {
   const email = input.email.trim().toLowerCase()
 
   const existing = await db
@@ -116,8 +121,8 @@ export async function register(
 
 export async function login(
   input: { email: string; password: string },
-  meta: { userAgent?: string; ip?: string; trustedDevice?: boolean },
-): Promise<IssuedSession> {
+  meta: { userAgent?: string; ip?: string; deviceToken?: string },
+): Promise<SignedInSession> {
   const email = input.email.trim().toLowerCase()
 
   const rows = await db
@@ -129,30 +134,30 @@ export async function login(
 
   const clientKey = `${email}|${meta.ip ?? 'unknown'}`
   const accountKey = `${email}|*`
+  const trusted = user ? isTrustedDevice(user, meta.deviceToken) : false
   if (
     loginThrottle.blocked(clientKey) ||
-    (!meta.trustedDevice && loginThrottle.blocked(accountKey, MAX_ACCOUNT_FAILURES))
+    (!trusted && loginThrottle.blocked(accountKey, MAX_ACCOUNT_FAILURES))
   ) {
     throw tooManyRequests(
       'Too many sign-in attempts. Try again in a few minutes or reset your password.',
     )
   }
-  const fail = () => {
-    loginThrottle.fail(clientKey)
-    loginThrottle.fail(accountKey)
-  }
+  // Count the attempt before the first await: parallel requests would otherwise
+  // all pass the check above while their password hashes are still verifying.
+  loginThrottle.fail(clientKey)
+  loginThrottle.fail(accountKey)
 
   if (!user) {
     await fakeVerify()
-    fail()
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
 
   if (!(await verifyPassword(user.passwordHash, input.password))) {
-    fail()
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
   loginThrottle.clear(clientKey)
+  loginThrottle.clear(accountKey)
 
   if (needsRehash(user.passwordHash)) {
     await db

@@ -1,7 +1,7 @@
 {
   "name": "aranya",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "ARANYA — Ancient Wisdom. Naturally Reimagined. A premium 3D herbal wellness e-commerce platform.",
   "engines": {
