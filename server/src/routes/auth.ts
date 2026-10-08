@@ -19,7 +19,14 @@ import {
   userSchema,
 } from '@aranya/shared'
 import * as authService from '../services/auth.service.js'
-import { REFRESH_COOKIE, SESSION_HINT_COOKIE, refreshCookieOptions } from '../lib/tokens.js'
+import {
+  DEVICE_COOKIE,
+  REFRESH_COOKIE,
+  SESSION_HINT_COOKIE,
+  deviceToken,
+  isTrustedDevice,
+  refreshCookieOptions,
+} from '../lib/tokens.js'
 import { unauthorized } from '../http/errors.js'
 import type { AppEnv } from '../http/context.js'
 
@@ -196,13 +203,16 @@ export function authRoutes(app: OpenAPIHono<AppEnv>) {
     const body = c.req.valid('json')
     const session = await authService.register(body, requestMeta(c))
     setRefreshCookie(c, session)
+    setDeviceCookie(c, body.email)
     return c.json(refreshEnvelope(session), 200)
   })
 
   app.openapi(loginRoute, async (c) => {
     const body = c.req.valid('json')
-    const session = await authService.login(body, requestMeta(c))
+    const trustedDevice = isTrustedDevice(body.email, getCookie(c, DEVICE_COOKIE))
+    const session = await authService.login(body, { ...requestMeta(c), trustedDevice })
     setRefreshCookie(c, session)
+    setDeviceCookie(c, body.email)
     return c.json(refreshEnvelope(session), 200)
   })
 
@@ -276,6 +286,13 @@ function setRefreshCookie(c: Parameters<typeof setCookie>[0], session: authServi
     ...refreshCookieOptions(COOKIE_SECURE),
     httpOnly: false,
     path: '/',
+  })
+}
+
+function setDeviceCookie(c: Parameters<typeof setCookie>[0], email: string) {
+  setCookie(c, DEVICE_COOKIE, deviceToken(email), {
+    ...refreshCookieOptions(COOKIE_SECURE),
+    maxAge: 180 * 86_400,
   })
 }
 

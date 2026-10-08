@@ -19,7 +19,7 @@ v2 turns the frontend prototype into a full-stack product. See
 - `packages/shared` (Zod schemas, types, pricing rules) and `packages/data` (deterministic seed catalogue).
 - A typed API client on TanStack Query with optimistic cart and wishlist updates, guest-cart merge on sign-in, silent session restore, redirect-back after login, and cold-start handling ("Waking up the server…" with automatic retries for up to 90 s).
 - Accessible dialogs: focus trap, Escape and focus return for the cart drawer, search palette, quick view, filters and admin modals.
-- 205 Vitest tests (server against real Postgres, plus web units) and 22 Playwright scenarios on desktop Chromium and a mobile viewport, with axe-core checks.
+- 207 Vitest tests (server against real Postgres, plus web units) and 22 Playwright scenarios on desktop Chromium and a mobile viewport, with axe-core checks.
 - GitHub Actions CI (lint, typecheck, knip, format, audit, tests with a Postgres service, build, bundle budget, e2e) and Dependabot.
 - Deployment: `vercel.json` (SPA fallback, `/api/*` rewrite, CSP, HSTS), a Render Blueprint, a multi-stage non-root Dockerfile with a health check, and `docs/DEPLOYMENT.md`.
 - SEO: a generated `sitemap.xml` and `robots.txt`, `og:image`, per-route titles and descriptions, and Product JSON-LD.

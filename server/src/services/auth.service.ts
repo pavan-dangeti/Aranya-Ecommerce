@@ -1,4 +1,4 @@
-import { loginThrottle } from '../middleware/rate-limit.js'
+import { MAX_ACCOUNT_FAILURES, loginThrottle } from '../middleware/rate-limit.js'
 import { and, eq, isNull, lt, sql } from 'drizzle-orm'
 import type { Db, Tx } from '../db/client.js'
 import { db } from '../db/client.js'
@@ -116,7 +116,7 @@ export async function register(
 
 export async function login(
   input: { email: string; password: string },
-  meta: { userAgent?: string; ip?: string },
+  meta: { userAgent?: string; ip?: string; trustedDevice?: boolean },
 ): Promise<IssuedSession> {
   const email = input.email.trim().toLowerCase()
 
@@ -127,22 +127,32 @@ export async function login(
     .limit(1)
   const user = rows[0]
 
-  const throttleKey = `${email}|${meta.ip ?? 'unknown'}`
-  if (loginThrottle.blocked(throttleKey)) {
-    throw tooManyRequests('Too many sign-in attempts. Try again in a few minutes.')
+  const clientKey = `${email}|${meta.ip ?? 'unknown'}`
+  const accountKey = `${email}|*`
+  if (
+    loginThrottle.blocked(clientKey) ||
+    (!meta.trustedDevice && loginThrottle.blocked(accountKey, MAX_ACCOUNT_FAILURES))
+  ) {
+    throw tooManyRequests(
+      'Too many sign-in attempts. Try again in a few minutes or reset your password.',
+    )
+  }
+  const fail = () => {
+    loginThrottle.fail(clientKey)
+    loginThrottle.fail(accountKey)
   }
 
   if (!user) {
     await fakeVerify()
-    loginThrottle.fail(throttleKey)
+    fail()
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
 
   if (!(await verifyPassword(user.passwordHash, input.password))) {
-    loginThrottle.fail(throttleKey)
+    fail()
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
-  loginThrottle.clear(throttleKey)
+  loginThrottle.clear(clientKey)
 
   if (needsRehash(user.passwordHash)) {
     await db

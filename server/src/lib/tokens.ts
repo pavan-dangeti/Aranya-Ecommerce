@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto'
+import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto'
 import { SignJWT, jwtVerify } from 'jose'
 import { env } from '../env.js'
 import { unauthorized } from '../http/errors.js'
@@ -77,6 +77,25 @@ export const refreshCookieOptions = (
     maxAge: env.REFRESH_TOKEN_TTL_DAYS * 86_400,
     ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
   }) as const
+
+export const DEVICE_COOKIE = 'aranya_device'
+
+/**
+ * Proof that this browser has signed in to `email` before. It lets the owner
+ * through while the account-wide failure ceiling is blocking an attacker.
+ */
+export function deviceToken(email: string): string {
+  return createHmac('sha256', env.JWT_SECRET)
+    .update(`device:${email.trim().toLowerCase()}`)
+    .digest('base64url')
+}
+
+export function isTrustedDevice(email: string, token: string | undefined): boolean {
+  if (!token) return false
+  const expected = Buffer.from(deviceToken(email))
+  const actual = Buffer.from(token)
+  return actual.length === expected.length && timingSafeEqual(actual, expected)
+}
 
 export function generateResetToken(): string {
   return randomBytes(32).toString('base64url')

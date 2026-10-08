@@ -72,19 +72,22 @@ export function rateLimit(max: number, windowMs: number, scope: string): Middlew
 }
 
 const MAX_LOGIN_FAILURES = 8
+export const MAX_ACCOUNT_FAILURES = 30
 const LOGIN_FAILURE_WINDOW_MS = 15 * 60_000
 const loginFailures = new Map<string, Bucket>()
 
 /**
- * Failed sign-ins counted per (email, client). Keying on the account alone
- * would let anyone lock a victim out; counting unknown emails the same way
- * keeps the 429 from revealing which accounts exist.
+ * Failed sign-ins counted per (email, client), plus an account-wide ceiling
+ * that only applies to browsers without a device cookie for that account.
+ * A distributed guesser hits the ceiling; the owner on a known device does
+ * not, so nobody can lock another person out. Unknown emails are counted the
+ * same way, so a 429 never reveals which accounts exist.
  * ponytail: in-memory, so per instance; move to Postgres/Redis when the API scales out.
  */
 export const loginThrottle = {
-  blocked(key: string): boolean {
+  blocked(key: string, max = MAX_LOGIN_FAILURES): boolean {
     const entry = loginFailures.get(key)
-    return Boolean(entry && entry.resetAt > Date.now() && entry.count >= MAX_LOGIN_FAILURES)
+    return Boolean(entry && entry.resetAt > Date.now() && entry.count >= max)
   },
   fail(key: string): void {
     const now = Date.now()

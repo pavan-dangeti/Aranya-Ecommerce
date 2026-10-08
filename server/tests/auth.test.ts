@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { refreshCookieOptions } from '../src/lib/tokens.js'
+import { isTrustedDevice, refreshCookieOptions } from '../src/lib/tokens.js'
 import { clientKey } from '../src/middleware/rate-limit.js'
 import * as authService from '../src/services/auth.service.js'
 import { db } from '../src/db/client.js'
@@ -173,6 +173,44 @@ describe('login', () => {
         { ip: '203.0.113.20' },
       ),
     ).resolves.toMatchObject({ user: { email: 'victim@example.com' } })
+  })
+
+  it("caps guesses spread across many clients, but not on the owner's known device", async () => {
+    await registerCustomer('spread@example.com')
+    for (let i = 0; i < 30; i++) {
+      await authService
+        .login({ email: 'spread@example.com', password: 'nope' }, { ip: `198.51.100.${i}` })
+        .catch(() => undefined)
+    }
+    await expect(
+      authService.login(
+        { email: 'spread@example.com', password: 'Passw0rd!23' },
+        { ip: '203.0.113.99' },
+      ),
+    ).rejects.toMatchObject({ status: 429 })
+    await expect(
+      authService.login(
+        { email: 'spread@example.com', password: 'Passw0rd!23' },
+        { ip: '203.0.113.99', trustedDevice: true },
+      ),
+    ).resolves.toMatchObject({ user: { email: 'spread@example.com' } })
+  })
+
+  it('marks a browser as a known device only for the account it signed in to', async () => {
+    const res = await request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Device',
+        email: 'device@example.com',
+        password: 'Passw0rd!23',
+      }),
+    })
+    const cookie = res.headers.getSetCookie().find((c) => c.startsWith('aranya_device='))
+    expect(cookie).toMatch(/HttpOnly/i)
+    const token = cookie!.split(';')[0]!.split('=')[1]
+    expect(isTrustedDevice('device@example.com', token)).toBe(true)
+    expect(isTrustedDevice('someone.else@example.com', token)).toBe(false)
+    expect(isTrustedDevice('device@example.com', 'forged')).toBe(false)
   })
 
   it('throttles unknown emails the same way, so a 429 reveals nothing', async () => {
