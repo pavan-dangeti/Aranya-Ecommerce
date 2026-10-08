@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://aranya-api.onrender.com/api/:path*"
+      "destination": "https://aranya-api-e43m.onrender.com/api/:path*"
     },
     {
       "source": "/((?!api/).*)",
