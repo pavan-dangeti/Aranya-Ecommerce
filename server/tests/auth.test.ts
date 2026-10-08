@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { refreshCookieOptions } from '../src/lib/tokens.js'
 import { clientKey } from '../src/middleware/rate-limit.js'
+import * as authService from '../src/services/auth.service.js'
 import { db } from '../src/db/client.js'
 import { refreshTokens, users } from '../src/db/schema.js'
 import {
@@ -144,13 +145,50 @@ describe('login', () => {
 
   it('clears the failure counter after a success', async () => {
     await registerCustomer('reset@example.com')
-    await request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email: 'reset@example.com', password: 'nope' }),
-    })
-    await loginAs('reset@example.com', 'Passw0rd!23')
-    const row = (await db.select().from(users).where(eq(users.email, 'reset@example.com')))[0]
-    expect(row?.failedLogins).toBe(0)
+    const meta = { ip: '203.0.113.7' }
+    const attempt = (password: string) =>
+      authService.login({ email: 'reset@example.com', password }, meta).then(
+        () => 'ok',
+        (err: { status?: number }) => err.status,
+      )
+    for (let i = 0; i < 7; i++) expect(await attempt('nope')).toBe(401)
+    expect(await attempt('Passw0rd!23')).toBe('ok')
+    for (let i = 0; i < 7; i++) expect(await attempt('nope')).toBe(401)
+    expect(await attempt('Passw0rd!23')).toBe('ok')
+  })
+
+  it('a stranger hammering an account cannot lock its owner out', async () => {
+    await registerCustomer('victim@example.com')
+    for (let i = 0; i < 12; i++) {
+      await authService
+        .login({ email: 'victim@example.com', password: 'nope' }, { ip: '198.51.100.66' })
+        .catch(() => undefined)
+    }
+    await expect(
+      authService.login({ email: 'victim@example.com', password: 'nope' }, { ip: '198.51.100.66' }),
+    ).rejects.toMatchObject({ status: 429 })
+    await expect(
+      authService.login(
+        { email: 'victim@example.com', password: 'Passw0rd!23' },
+        { ip: '203.0.113.20' },
+      ),
+    ).resolves.toMatchObject({ user: { email: 'victim@example.com' } })
+  })
+
+  it('throttles unknown emails the same way, so a 429 reveals nothing', async () => {
+    const statuses: Array<number | undefined> = []
+    for (let i = 0; i < 9; i++) {
+      statuses.push(
+        await authService
+          .login({ email: 'nobody@example.com', password: 'nope' }, { ip: '198.51.100.9' })
+          .then(
+            () => 200,
+            (err: { status?: number }) => err.status,
+          ),
+      )
+    }
+    expect(statuses.slice(0, 8).every((s) => s === 401)).toBe(true)
+    expect(statuses[8]).toBe(429)
   })
 })
 

@@ -1,3 +1,4 @@
+import { loginThrottle } from '../middleware/rate-limit.js'
 import { and, eq, isNull, lt, sql } from 'drizzle-orm'
 import type { Db, Tx } from '../db/client.js'
 import { db } from '../db/client.js'
@@ -16,8 +17,6 @@ import {
 import { env } from '../env.js'
 import type { Role } from '@aranya/shared'
 
-const MAX_FAILED_LOGINS = 8
-const LOCKOUT_MS = 15 * 60_000
 const RESET_TOKEN_TTL_MS = 60 * 60_000
 
 export interface PublicUser {
@@ -128,36 +127,28 @@ export async function login(
     .limit(1)
   const user = rows[0]
 
+  const throttleKey = `${email}|${meta.ip ?? 'unknown'}`
+  if (loginThrottle.blocked(throttleKey)) {
+    throw tooManyRequests('Too many sign-in attempts. Try again in a few minutes.')
+  }
+
   if (!user) {
     await fakeVerify()
+    loginThrottle.fail(throttleKey)
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
 
-  if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
-    throw tooManyRequests('Account temporarily locked after too many attempts. Try again later.')
-  }
-
-  const ok = await verifyPassword(user.passwordHash, input.password)
-
-  if (!ok) {
-    const failed = user.failedLogins + 1
-    await db
-      .update(users)
-      .set({
-        failedLogins: failed,
-        ...(failed >= MAX_FAILED_LOGINS ? { lockedUntil: new Date(Date.now() + LOCKOUT_MS) } : {}),
-      })
-      .where(eq(users.id, user.id))
+  if (!(await verifyPassword(user.passwordHash, input.password))) {
+    loginThrottle.fail(throttleKey)
     throw unauthorized('Invalid email or password', 'invalid_credentials')
   }
+  loginThrottle.clear(throttleKey)
 
   if (needsRehash(user.passwordHash)) {
     await db
       .update(users)
-      .set({ passwordHash: await hashPassword(input.password), failedLogins: 0, lockedUntil: null })
+      .set({ passwordHash: await hashPassword(input.password) })
       .where(eq(users.id, user.id))
-  } else if (user.failedLogins > 0) {
-    await db.update(users).set({ failedLogins: 0, lockedUntil: null }).where(eq(users.id, user.id))
   }
 
   return db.transaction((tx) => issueSession(tx, user, meta))
@@ -301,8 +292,6 @@ export async function changePassword(
     .set({
       passwordHash: await hashPassword(input.newPassword),
       passwordChangedAt: new Date(),
-      failedLogins: 0,
-      lockedUntil: null,
     })
     .where(eq(users.id, userId))
 
@@ -354,8 +343,6 @@ export async function resetPassword(token: string, newPassword: string): Promise
       .set({
         passwordHash: await hashPassword(newPassword),
         passwordChangedAt: new Date(),
-        failedLogins: 0,
-        lockedUntil: null,
       })
       .where(eq(users.id, stored.userId))
 

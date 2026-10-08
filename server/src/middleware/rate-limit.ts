@@ -13,6 +13,7 @@ const buckets = new Map<string, Bucket>()
 setInterval(() => {
   const now = Date.now()
   for (const [key, bucket] of buckets) if (bucket.resetAt <= now) buckets.delete(key)
+  for (const [key, entry] of loginFailures) if (entry.resetAt <= now) loginFailures.delete(key)
 }, 60_000).unref()
 
 /**
@@ -70,8 +71,36 @@ export function rateLimit(max: number, windowMs: number, scope: string): Middlew
   }
 }
 
+const MAX_LOGIN_FAILURES = 8
+const LOGIN_FAILURE_WINDOW_MS = 15 * 60_000
+const loginFailures = new Map<string, Bucket>()
+
+/**
+ * Failed sign-ins counted per (email, client). Keying on the account alone
+ * would let anyone lock a victim out; counting unknown emails the same way
+ * keeps the 429 from revealing which accounts exist.
+ * ponytail: in-memory, so per instance; move to Postgres/Redis when the API scales out.
+ */
+export const loginThrottle = {
+  blocked(key: string): boolean {
+    const entry = loginFailures.get(key)
+    return Boolean(entry && entry.resetAt > Date.now() && entry.count >= MAX_LOGIN_FAILURES)
+  },
+  fail(key: string): void {
+    const now = Date.now()
+    const entry = loginFailures.get(key)
+    if (!entry || entry.resetAt <= now)
+      loginFailures.set(key, { count: 1, resetAt: now + LOGIN_FAILURE_WINDOW_MS })
+    else entry.count += 1
+  },
+  clear(key: string): void {
+    loginFailures.delete(key)
+  },
+}
+
 export function resetRateLimits(): void {
   buckets.clear()
+  loginFailures.clear()
 }
 
 export function authRateLimit(): MiddlewareHandler<AppEnv> {

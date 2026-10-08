@@ -47,8 +47,6 @@ export const users = pgTable(
     passwordChangedAt: timestamp('password_changed_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
-    failedLogins: integer('failed_logins').notNull().default(0),
-    lockedUntil: timestamp('locked_until', { withTimezone: true }),
     ...timestamps,
   },
   (t) => [uniqueIndex('users_email_lower_idx').on(sql`lower(${t.email})`)],

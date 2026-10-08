@@ -16,7 +16,7 @@ import {
   reviewSchema,
 } from '@aranya/shared'
 import { db } from '../db/client.js'
-import { addresses, reviews } from '../db/schema.js'
+import { addresses, reviews, users } from '../db/schema.js'
 import { requireAuth } from '../middleware/auth.js'
 import { CSRF_COOKIE } from '../middleware/csrf.js'
 import * as cartService from '../services/cart.service.js'
@@ -296,7 +296,11 @@ export function commerceRoutes(app: OpenAPIHono<AppEnv>) {
       .values({
         productId: body.productId,
         userId: auth.sub,
-        author: auth.email.split('@')[0] ?? 'Customer',
+        author: publicAuthorName(
+          (
+            await db.select({ name: users.name }).from(users).where(eq(users.id, auth.sub)).limit(1)
+          )[0]?.name,
+        ),
         location: body.location,
         rating: body.rating,
         title: body.title,
@@ -467,4 +471,12 @@ async function clearOtherDefaults(userId: string, keepId: string): Promise<void>
     .set({ isDefault: false })
     .where(and(eq(addresses.userId, userId), eq(addresses.isDefault, true)))
   await db.update(addresses).set({ isDefault: true }).where(eq(addresses.id, keepId))
+}
+
+/** Reviews are public, so they carry "Asha R." and never anything derived from the email. */
+export function publicAuthorName(name: string | undefined): string {
+  const [first, ...rest] = (name ?? '').trim().split(/\s+/).filter(Boolean)
+  if (!first) return 'Verified buyer'
+  const last = rest.at(-1)
+  return last ? `${first} ${last[0]!.toUpperCase()}.` : first
 }

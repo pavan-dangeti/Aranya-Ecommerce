@@ -31,7 +31,7 @@ audit trail.
 | CLS                                                   | 0.40         | ≈ 0          |
 | Lighthouse accessibility                              | 85–94        | 98–100       |
 
-**Quality gates.** 199 Vitest tests (147 server tests against real Postgres and
+**Quality gates.** 205 Vitest tests (153 server tests against real Postgres and
 52 web), 22 Playwright journeys on desktop and mobile with axe-core, and a CI
 pipeline that lints, typechecks, audits, tests, builds, checks the bundle
 budget and runs e2e on every push.

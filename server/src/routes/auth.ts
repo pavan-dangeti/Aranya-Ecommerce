@@ -1,3 +1,4 @@
+import { clientKey } from '../middleware/rate-limit.js'
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { z } from 'zod'
@@ -36,7 +37,7 @@ function refreshEnvelope(session: authService.IssuedSession) {
 function requestMeta(c: Parameters<Parameters<OpenAPIHono<AppEnv>['openapi']>[1]>[0]) {
   return {
     userAgent: c.req.header('user-agent'),
-    ip: c.req.header('x-forwarded-for')?.split(',')[0]?.trim(),
+    ip: clientKey(c),
   }
 }
 

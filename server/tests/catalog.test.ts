@@ -1,3 +1,4 @@
+import { publicAuthorName } from '../src/routes/commerce.js'
 import { describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { db } from '../src/db/client.js'
@@ -190,6 +191,30 @@ describe('reviews', () => {
       await request('/products/arn-001/reviews'),
     )
     expect(publicList.some((r) => r.author.includes('rev'))).toBe(false)
+  })
+
+  it('publishes the reviewer as "First L." and never anything from their email', async () => {
+    const session = await registerCustomer('private.person@example.com')
+    const res = await request('/reviews', {
+      method: 'POST',
+      session,
+      body: JSON.stringify({
+        productId: 'arn-001',
+        rating: 4,
+        title: 'Lovely',
+        body: 'Calm and fragrant every morning.',
+      }),
+    })
+    const review = await json<{ author: string }>(res)
+    expect(review.author).toBe('Test C.')
+    expect(review.author).not.toMatch(/private|example/i)
+  })
+
+  it('formats public author names', () => {
+    expect(publicAuthorName('Asha Rao')).toBe('Asha R.')
+    expect(publicAuthorName('  Mira  ')).toBe('Mira')
+    expect(publicAuthorName('Anil Kumar Verma')).toBe('Anil V.')
+    expect(publicAuthorName('')).toBe('Verified buyer')
   })
 
   it('accepts a review and queues it as pending', async () => {

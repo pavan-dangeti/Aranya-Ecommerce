@@ -215,7 +215,7 @@ export async function runSeed() {
       return {
         productId: spec.productId,
         userId: customer ? userIdByEmail.get(customer.email) : null,
-        author: customer?.name ?? spec.author,
+        author: customer?.name ?? 'Verified buyer',
         location: spec.location,
         rating: spec.rating,
         title: spec.title,

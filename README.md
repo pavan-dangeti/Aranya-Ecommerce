@@ -127,7 +127,8 @@ flowchart LR
 - **No trust in the client.** Roles live only in the database and signed tokens, and every `/api/admin/*` route runs behind a server-side admin guard. A Playwright test writes `role: "admin"` into every browser store and proves it grants nothing (the API answers 403).
 - **Sessions.** A 15-minute access token is held in memory. The refresh token is random, stored only as a hash, sent as an `httpOnly`, `Secure`, `SameSite=Lax` cookie scoped to `/api/auth`, and rotated on every use. Re-presenting a rotated token revokes the whole token family (reuse detection).
 - **CSRF.** Cookie-authenticated mutations need a double-submit token plus an `Origin` allow-list check.
-- **Abuse.** Rate limits on login, register and forgot-password; unknown emails take as long as known ones; password-reset links never reach production logs.
+- **Abuse.** Rate limits on login, register and forgot-password, keyed on the address the trusted proxy saw (forwarding headers are never taken from the client). Failed sign-ins are throttled per email and client, so nobody can lock another person out, and unknown emails behave exactly like known ones. Password-reset links never reach production logs.
+- **Privacy.** Public reviews show "First L." from the account name, never anything derived from an email.
 - **Orders.** Prices, shipping (free over ₹999, otherwise ₹79) and totals are recomputed on the server. Stock is decremented in a transaction with row locks taken in a stable order, an idempotency key makes a double-clicked checkout create one order, and customers can only read their own orders.
 - **Payments.** Behind a `PaymentProvider` interface; card data never touches the server.
 - **Headers.** Strict CSP (`connect-src 'self'`), HSTS, `X-Frame-Options: DENY`, `nosniff` and a strict referrer policy via `vercel.json`. The API adds its own security headers, a CORS allow-list and a body-size cap.
@@ -162,7 +163,7 @@ The remaining gap to 90+ on the home and product pages is client-side rendering 
 
 | Suite                                  |  Count | What it covers                                                                                                                                                                                                                               |
 | -------------------------------------- | -----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Server integration (Vitest + Postgres) |    147 | Pricing and shipping, the last-unit stock race, idempotent checkout, login, refresh rotation, reuse detection, logout, role enforcement, rate limits, order ownership, the status state machine, Zod rejections                              |
+| Server integration (Vitest + Postgres) |    153 | Pricing and shipping, the last-unit stock race, idempotent checkout, login, refresh rotation, reuse detection, logout, role enforcement, rate limits, order ownership, the status state machine, Zod rejections                              |
 | Web unit (Vitest)                      |     52 | API client error paths (401 refresh, 403, cold-start retries, empty messages), guest-cart store, form validators, server-error mapping                                                                                                       |
 | End-to-end (Playwright)                | 22 × 2 | Browse, filter and search, ⌘K palette, quick view, cart, wishlist, register → checkout → order in profile → logout, admin edits, 403 on a forced `/admin`, axe-core with zero serious violations; on desktop Chromium and a Pixel 7 viewport |
 
