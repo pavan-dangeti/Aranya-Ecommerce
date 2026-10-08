@@ -10,6 +10,7 @@ All notable changes to this project are documented here. The format follows
 
 - Device cookies are now `issuedAt.HMAC(user, password version, issuedAt)`: they expire after 180 days and are revoked by any password change or reset, instead of being a permanent per-email value.
 - Sign-in attempts are counted before the password check runs, so a burst of parallel requests can no longer exceed the per-client or account-wide limit.
+- Changing the password from a signed-in session is throttled per account, so a stolen session cannot be used to guess the current password.
 
 ## [2.0.0] - 2026-10-07
 

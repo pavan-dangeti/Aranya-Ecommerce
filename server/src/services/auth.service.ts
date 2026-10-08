@@ -299,8 +299,16 @@ export async function changePassword(
   const user = rows[0]
   if (!user) throw unauthorized('Account no longer exists', 'unauthorized')
 
+  // A stolen session must not become an unlimited oracle for the current password.
+  const throttleKey = `${user.email.toLowerCase()}|change-password`
+  if (loginThrottle.blocked(throttleKey)) {
+    throw tooManyRequests('Too many attempts. Try again in a few minutes or reset your password.')
+  }
+  loginThrottle.fail(throttleKey)
+
   const ok = await verifyPassword(user.passwordHash, input.currentPassword)
   if (!ok) throw badRequest('Current password is incorrect', 'invalid_credentials')
+  loginThrottle.clear(throttleKey)
 
   await db
     .update(users)

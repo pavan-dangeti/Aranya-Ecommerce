@@ -239,6 +239,29 @@ describe('login', () => {
     expect(isTrustedDevice(after, session.deviceToken)).toBe(false)
   })
 
+  it('throttles guesses at the current password from a signed-in session', async () => {
+    const session = await authService.register(
+      { name: 'Oracle', email: 'oracle@example.com', password: 'Passw0rd!23' },
+      {},
+    )
+    const statuses: Array<number | undefined> = []
+    for (let i = 0; i < 9; i++) {
+      statuses.push(
+        await authService
+          .changePassword(session.user.id, {
+            currentPassword: `guess-${i}`,
+            newPassword: 'N3w-Passw0rd!',
+          })
+          .then(
+            () => 200,
+            (err: { status?: number }) => err.status,
+          ),
+      )
+    }
+    expect(statuses.slice(0, 8).every((s) => s === 400)).toBe(true)
+    expect(statuses[8]).toBe(429)
+  })
+
   it('does not let a parallel burst exceed the per-client limit', async () => {
     await registerCustomer('burst@example.com')
     const statuses = await Promise.all(
