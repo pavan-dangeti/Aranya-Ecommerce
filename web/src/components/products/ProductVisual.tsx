@@ -20,6 +20,11 @@ export function packagingText(name: string, form: BottleForm): string {
   return `ARANYA ${name.replace(/^ARANYA\s/, '')} ${PACKAGING_META[form]}`
 }
 
+// SVG rendering strips leading/trailing spaces, but text-content readers (the
+// accessible-name check in axe, copy-paste) join the <text> runs verbatim, so
+// without them the label reads "ARANYAKesar MilkMasala…".
+const spaced = (text: string) => ` ${text} `
+
 interface ProductVisualProps {
   name: string
   form: BottleForm
@@ -394,7 +399,7 @@ function LabelGroup({
         letterSpacing="2.4"
         fill="#8f6b3f"
       >
-        ARANYA
+        {spaced('ARANYA')}
       </text>
       <line
         x1={cx - (tiny ? 10 : 16)}
@@ -413,7 +418,7 @@ function LabelGroup({
         fontSize={nameSize}
         fill="#1b3527"
       >
-        {line1.join(' ')}
+        {spaced(line1.join(' '))}
       </text>
       {line2.length > 0 && (
         <text
@@ -425,7 +430,7 @@ function LabelGroup({
           fontSize={nameSize * 0.92}
           fill="#1b3527"
         >
-          {line2.join(' ')}
+          {spaced(line2.join(' '))}
         </text>
       )}
       {!tiny && (
@@ -449,7 +454,7 @@ function LabelGroup({
             fill="#1b3527"
             fillOpacity="0.65"
           >
-            {meta}
+            {spaced(meta)}
           </text>
         </>
       )}
@@ -464,7 +469,7 @@ function LabelGroup({
           fill="#1b3527"
           fillOpacity="0.65"
         >
-          {meta}
+          {spaced(meta)}
         </text>
       )}
     </g>
