@@ -8,7 +8,7 @@ import { useCartView } from '@/hooks/useCartView'
 import { useIsInWishlist, useToggleWishlist } from '@/hooks/useWishlist'
 import { useUi } from '@/store/uiStore'
 import { Rating } from '@/components/ui/Rating'
-import { ProductVisual } from './ProductVisual'
+import { ProductVisual, packagingText } from './ProductVisual'
 import { fadeUp, viewportOnce } from '@/utils/motion'
 import { cn } from '@/utils/cn'
 
@@ -39,7 +39,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         <Link
           to={`/products/${product.slug}`}
           className="block px-6 pt-6"
-          aria-label={`View ${product.name}`}
+          aria-label={`View ${packagingText(product.name, product.visual.form)}`}
         >
           <div className="transition-transform duration-700 ease-out group-hover:scale-[1.045]">
             <ProductVisual {...product.visual} name={product.name} />

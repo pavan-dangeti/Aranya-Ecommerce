@@ -94,7 +94,7 @@ export function Header() {
 
           <div className="flex items-center gap-1">
             <IconButton
-              label="Search products"
+              label="Search products ⌘K"
               onClick={openSearch}
               tone={overDarkHero ? 'light' : 'dark'}
               shortcutHint
@@ -103,14 +103,14 @@ export function Header() {
             </IconButton>
             <Link
               to="/wishlist"
-              aria-label={`Wishlist, ${wishlist.length} item${wishlist.length === 1 ? '' : 's'}`}
+              aria-label={withBadge('Wishlist', wishlist.length)}
               className={iconBtnClass(overDarkHero)}
             >
               <Heart size={19} strokeWidth={1.8} />
               {wishlist.length > 0 && <Dot value={wishlist.length} />}
             </Link>
             <IconButton
-              label="Open cart"
+              label={withBadge('Open cart', count)}
               onClick={() => (count > 0 ? openCart() : navigate('/cart'))}
               tone={overDarkHero ? 'light' : 'dark'}
             >
@@ -174,6 +174,7 @@ function IconButton({
     <button
       type="button"
       aria-label={label}
+      aria-keyshortcuts={shortcutHint ? 'Meta+K Control+K' : undefined}
       onClick={onClick}
       className={iconBtnClass(tone === 'light')}
     >
@@ -194,10 +195,16 @@ function IconButton({
   )
 }
 
+const badgeText = (value: number) => (value > 9 ? '9+' : String(value))
+
+// The badge is visible text, so the accessible name must contain it verbatim (WCAG 2.5.3).
+const withBadge = (label: string, value: number) =>
+  value > 0 ? `${label}, ${badgeText(value)} item${value === 1 ? '' : 's'}` : label
+
 function Dot({ value }: { value: number }) {
   return (
     <span className="absolute -top-0.5 -right-0.5 grid min-w-4.5 place-items-center rounded-full bg-bronze-500 px-1 py-px text-[9px] leading-none font-bold text-forest-950">
-      {value > 9 ? '9+' : value}
+      {badgeText(value)}
     </span>
   )
 }

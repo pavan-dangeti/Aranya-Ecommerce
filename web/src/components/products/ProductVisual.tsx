@@ -3,6 +3,23 @@ import type { BottleForm } from '@/types'
 import { shade } from '@/utils/color'
 import { cn } from '@/utils/cn'
 
+const PACKAGING_META: Record<BottleForm, string> = {
+  flask: '60 CAPSULES · NET 48 g',
+  dropper: '30 ml · ALCOHOL-FREE',
+  jar: 'NET 100 g',
+  pump: '250 ml',
+  tin: 'LOOSE BLEND · 75 g',
+  tube: '75 ml',
+}
+
+/**
+ * Everything the bottle label prints, in reading order. Links wrapping the
+ * artwork must include it in their accessible name (WCAG 2.5.3).
+ */
+export function packagingText(name: string, form: BottleForm): string {
+  return `ARANYA ${name.replace(/^ARANYA\s/, '')} ${PACKAGING_META[form]}`
+}
+
 interface ProductVisualProps {
   name: string
   form: BottleForm
@@ -42,7 +59,7 @@ export function ProductVisual({
     <svg
       viewBox="0 0 320 400"
       role="img"
-      aria-label={`${name} — ARANYA botanical packaging`}
+      aria-label={packagingText(name, form)}
       className={cn('h-auto w-full', className)}
     >
       <defs>
@@ -129,7 +146,7 @@ export function ProductVisual({
             h={106}
             accent={accent}
             name={name}
-            meta="60 CAPSULES · NET 48 g"
+            meta={PACKAGING_META.flask}
           />
         </g>
       )}
@@ -168,7 +185,7 @@ export function ProductVisual({
             h={100}
             accent={accent}
             name={name}
-            meta="30 ml · ALCOHOL-FREE"
+            meta={PACKAGING_META.dropper}
           />
         </g>
       )}
@@ -204,7 +221,7 @@ export function ProductVisual({
             h={72}
             accent={accent}
             name={name}
-            meta="NET 100 g"
+            meta={PACKAGING_META.jar}
             compact
           />
         </g>
@@ -235,7 +252,7 @@ export function ProductVisual({
             h={108}
             accent={accent}
             name={name}
-            meta="250 ml"
+            meta={PACKAGING_META.pump}
           />
         </g>
       )}
@@ -263,7 +280,7 @@ export function ProductVisual({
             h={76}
             accent={accent}
             name={name}
-            meta="LOOSE BLEND · 75 g"
+            meta={PACKAGING_META.tin}
             compact
           />
         </g>
@@ -300,7 +317,7 @@ export function ProductVisual({
             h={74}
             accent={accent}
             name={name}
-            meta="75 ml"
+            meta={PACKAGING_META.tube}
             tiny
           />
         </g>
