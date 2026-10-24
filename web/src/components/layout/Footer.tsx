@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Instagram, Linkedin, Youtube } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { LogoMark } from './Logo'
 
 const COLUMNS = [
@@ -31,6 +31,56 @@ const COLUMNS = [
     ],
   },
 ]
+
+// lucide-react 1.x dropped brand marks, so these are drawn on lucide's grid and stroke.
+function brandIcon(paths: ReactNode) {
+  return function BrandIcon({
+    size = 24,
+    strokeWidth = 2,
+  }: {
+    size?: number
+    strokeWidth?: number
+  }) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        {paths}
+      </svg>
+    )
+  }
+}
+
+const Instagram = brandIcon(
+  <>
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <path d="M17.5 6.5h.01" />
+  </>,
+)
+
+const Youtube = brandIcon(
+  <>
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+    <path d="m10 15 5-3-5-3z" />
+  </>,
+)
+
+const Linkedin = brandIcon(
+  <>
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </>,
+)
 
 const SOCIALS = [
   { label: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
