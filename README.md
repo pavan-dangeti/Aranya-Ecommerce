@@ -140,13 +140,13 @@ flowchart LR
 
 **JavaScript on first load (gzip)**
 
-| Route       | v1 prototype (three + r3f preloaded) | v2     |
+| Route       | v1 prototype (three + r3f preloaded) | v2.0.2 |
 | ----------- | ------------------------------------ | ------ |
-| `/`         | ≈ 442 KB                             | 149 KB |
-| `/products` | ≈ 437 KB                             | 140 KB |
-| `/admin`    | ≈ 440 KB                             | 137 KB |
+| `/`         | ≈ 442 KB                             | 161 KB |
+| `/products` | ≈ 437 KB                             | 152 KB |
+| `/admin`    | ≈ 440 KB                             | 149 KB |
 
-**Lighthouse 12, mobile preset, median of three local runs**
+**Lighthouse 12, mobile preset, median of three local runs (measured on v2.0.0)**
 
 | Page            | Performance | Accessibility | Best practices | SEO | LCP   | CLS   |
 | --------------- | :---------: | :-----------: | :------------: | :-: | ----- | ----- |

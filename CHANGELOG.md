@@ -4,6 +4,33 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [2.0.2] - 2026-10-24
+
+### Security
+
+- vite 8.3.3 replaces 7.3.6. Versions 7.0.0–7.3.6 and 8.3.0–8.3.2 bundle `launch-editor` releases affected by GHSA-698v-4r3x-3vcv, GHSA-r825-w8mm-5pxw, GHSA-587h-7wmj-h5pm, GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22 and GHSA-vfpm-58rq-9qcg.
+- zod 4.6.7 fixes GHSA-mrhx-c7xc-m3w5 (memory exhaustion on oversized constrained collections).
+- Root `overrides` keep a single vite and zod copy installed, so no tool falls back to a vulnerable hoisted version.
+
+### Accessibility
+
+- Accessible names now contain the visible text (WCAG 2.5.3): the search button is "Search products ⌘K" with `aria-keyshortcuts`, the cart and wishlist names carry their badge count exactly as shown (including "9+"), and product-card image links include the text printed on the bottle label.
+- The bottle-label SVG text runs are spaced so their text content reads as words; rendering is unchanged.
+
+### Dependencies
+
+- Runtime: react and react-dom 19.3.1, react-router 8.4.0, @tanstack/react-query 5.104.4, three 0.186.1, @react-three/fiber 9.8.2, @react-three/drei 10.7.9, lucide-react 1.52.0, hono 4.13.13, @hono/node-server 2.1.5, drizzle-orm 0.45.4, @scalar/hono-api-reference 0.12.13, dotenv 18.0.8.
+- Tooling: @vitejs/plugin-react 6.1.1 (drops the Babel toolchain), vitest 5.0.5, @playwright/test 1.64.1, @axe-core/playwright 4.14.0, typescript-eslint 8.71.2, eslint-plugin-react-refresh 0.5.7, knip 6.41.0, prettier 3.9.10, concurrently 10.0.6, @types/node 26.6.4, @types/react and @types/react-dom 19.3.0.
+- CI: actions/checkout, actions/setup-node and actions/upload-artifact v7.
+- lucide-react 1.x removed brand marks, so the footer's Instagram, YouTube and LinkedIn icons are drawn inline.
+- Dependabot version-update pull requests are turned off; security alerts stay on, and updates are applied and verified manually.
+
+### Deferred upgrades
+
+- **eslint 10:** `eslint-plugin-react-hooks` 5 only supports eslint 9 and below, so `npm ci` fails; it has to move together with the plugin upgrade below.
+- **eslint-plugin-react-hooks 7:** its React Compiler rules report 21 errors in 10 files (`set-state-in-effect` 11, `purity` 8, `refs` 1, `immutability` 1). Each needs a code change, not a config tweak.
+- **TypeScript 7:** `typescript-eslint` 8 requires TypeScript below 6.1, so installs fail until it adds support.
+
 ## [2.0.1] - 2026-10-08
 
 ### Security
@@ -54,6 +81,7 @@ v2 turns the frontend prototype into a full-stack product. See
 
 - Initial frontend prototype: 3D storefront, shop, product pages, cart, checkout, auth screens and admin console on a simulated data layer.
 
+[2.0.2]: https://github.com/pavan-dangeti/Aranya-Ecommerce/releases/tag/v2.0.2
 [2.0.1]: https://github.com/pavan-dangeti/Aranya-Ecommerce/releases/tag/v2.0.1
 [2.0.0]: https://github.com/pavan-dangeti/Aranya-Ecommerce/releases/tag/v2.0.0
 [1.0.0]: https://github.com/pavan-dangeti/Aranya-Ecommerce/commit/7e6c0f7
